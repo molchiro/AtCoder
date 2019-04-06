@@ -1,22 +1,50 @@
+def check_alive(n):
+    p = n
+    for spell in spells:
+        if spell[0] == s[p]:
+            p += 1 if spell[1] == 'R' else -1
+        if p == -1:
+            return 'L'
+        elif p == N:
+            return 'R'
+    return 'OK'
+
 N, Q = list(map(int, input().split()))
-X = [1 for i in range(N)]
 s = [x for x in input()]
+spells = [input().split() for i in range(Q)]
 
-res = 0
-for i in range(Q):
-    t, d = input().split()
-    if d == 'L':
-        for j in range(N):
-            if s[j] == t:
-                if j != 0:
-                    X[j-1] += X[j]
-                X[j] = 0
+def __main__():
+    if check_alive(0) == 'R':
+        print(0)
+        return
+    elif check_alive(0) == 'OK':
+        left_alive = 0
     else:
-        for j in range(N, 0, -1):
-            if s[j-1] == t:
-                if j != N:
-                    X[j] += X[j-1]
-                X[j-1] = 0
-print(sum(X))
-
+        a, b = 0, N-1
+        while b - a > 1:
+            m = round((b+a)/2)
+            if check_alive(m) == 'L':
+                a = m
+            else:
+                b = m
+        left_alive = b
+    if check_alive(N-1) == 'L':
+        print(0)
+        return
+    elif check_alive(N-1) == 'OK':
+        right_alive = N-1
+    else:
+        a, b = 0, N-1
+        while b - a > 1:
+            m = round((b+a)/2)
+            if check_alive(m) == 'R':
+                b = m
+            else:
+                a = m
+        right_alive = a
     
+    print(right_alive - left_alive + 1)
+
+if __name__ == "__main__":
+    __main__()
+

@@ -1,2 +1,2 @@
 N = int(input())
-N, K = list(map(int, input().split()))
+print(N**3)

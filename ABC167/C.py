@@ -1,26 +1,13 @@
+from itertools import product
+import numpy as np
+
 N, M, X = list(map(int, input().split()))
-conditions = [str(bin((2**N + i) & (2**(N+1) - 1)))[3:] for i in range(2**N)]
-Q = [list(map(int, input().split())) for i in range(N)]
-ans = -1
+conditions = product([0, 1], repeat=N)
+A = np.array([list(map(int, input().split())) for i in range(N)])
+succeed = []
 for c in conditions:
-    res = [0]*(M+1)
-    for i in range(N):
-        if c[i] == '1':
-            for j in range(M+1):
-                res[j] += Q[i][j]
-
-    failed = False
-    for i in range(1, M+1):
-        if res[i] >= X:
-            continue
-        else:
-            failed = True
-    if failed:
-        continue
-    else:
-        if ans == -1:
-            ans = res[0]
-        else:
-            ans = min(ans, res[0])
-
-print(ans)
+    p = A * np.array(c).reshape((N, 1))
+    res = p.sum(axis=0)
+    if np.all(res[1:] >= X):
+        succeed.append(res[0])
+print(min(succeed) if len(succeed) > 0 else -1)

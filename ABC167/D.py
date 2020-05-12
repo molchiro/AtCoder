@@ -2,20 +2,19 @@ N, K = list(map(int, input().split()))
 A = list(map(lambda x: int(x) - 1, input().split()))
 
 now = 0
-seen = []
+route = []
+seen = set()
 while True:
-    seen.append(now)
-    teleporter = A[now]
-    A[now] = 'used'
-    if teleporter == 'used':
+    if now in seen:
         break
-    else:
-        now = teleporter  
+    route.append(now)
+    seen.add(now)
+    now = A[now]
 
-loop_s = seen.index(now)
-size = len(seen) - loop_s - 1
+loop_start = route.index(now)
+loop_size = len(route) - loop_start
 
-if K <= loop_s:
-    print(seen[K] + 1)
-else:
-    print(seen[loop_s +(K - loop_s) % size] + 1)
+n_for_loop = min(K, loop_start)
+n_in_loop = (K - n_for_loop) % loop_size
+
+print(route[n_for_loop + n_in_loop] + 1)

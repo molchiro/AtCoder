@@ -4,9 +4,7 @@ A = list(map(lambda x: int(x) - 1, input().split()))
 now = 0
 route = []
 seen = set()
-while True:
-    if now in seen:
-        break
+while not now in seen:
     route.append(now)
     seen.add(now)
     now = A[now]

@@ -1,28 +1,17 @@
 N = int(input())
 A = list(map(int, input().split()))
-if N == 0 and A[0] == 1:
-    print(1)
-else:
-    nodes = [0]*(N+1)
-    s_d = 0 # 飽和してないノードが残ってる深さ
-    cap_d = 1 - A[0]
-    failed = False
-    for i, a in enumerate(A):
-        # a個の葉をなるべく浅いノードから取る
-        while a > 0:
-            # これ以上分岐することろがなければ失敗
-            if i < s_d or cap_d <= 0:
-                failed = True
-                break
-            # s_dから枝を取れるだけ取る
-            x = min(cap_d - nodes[s_d], a)
-            a -= x
-            nodes[s_d:i+1] = [node + x for node in nodes[s_d:i+1]]
-            # s_dがいっぱいになったら深さを一つ進める
-            if nodes[s_d] >= cap_d:
-                cap_d -= A[s_d]
-                cap_d *= 2
-                s_d += 1
-        if failed:
-            break
-    print(-1 if failed else sum(nodes))
+cap = [[0, 0] for _ in range(N+1)]
+cap[-1] = [A[-1], A[-1]]
+for i in range(N-1,-1,-1):
+    cap[i][0] = (cap[i+1][0] + 2 - 1)//2
+    cap[i][1] = cap[i+1][1] + A[i]
+ans = 1
+nodes = 1
+failed = nodes < cap[0][0]
+for i in range(N):
+    nodes = min((nodes - A[i])*2, cap[i+1][1])
+    if nodes < cap[i+1][0]:
+        failed = True
+        break
+    ans += nodes
+print(-1 if failed else ans)

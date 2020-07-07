@@ -1,4 +1,2 @@
-from math import ceil
-
 N = int(input())
-print(ceil(N/1000)*1000 - N)
+print((10000-N)%1000)

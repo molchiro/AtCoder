@@ -1,9 +1,4 @@
-from collections import Counter
-
 N = int(input())
-c = Counter([input() for _ in range(N)])
-
-print('AC x ' + str(c['AC']))
-print('WA x ' + str(c['WA']))
-print('TLE x ' + str(c['TLE']))
-print('RE x ' + str(c['RE']))
+S = [input() for _ in range(N)]
+for x in ['AC', 'WA', 'TLE', 'RE']:
+    print(x + ' x ' + str(S.count(x)))

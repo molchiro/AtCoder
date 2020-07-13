@@ -1,17 +1,24 @@
+# N = 10
+# X = '1'*N
 N = int(input())
 X = input()
-fn = {0: 0}
-fn_keys = {0}
+popcount_X = X.count('1')
+X_ = int(X, 2)
 
-def culc_fn(n, fn, fn_keys):
-    # fn_keysに入る値がバカでかくて低速なのが敗因？
-    if not n in fn_keys:
-        popcount = bin(n).count('1')
-        tmp = n%popcount
-        fn[n] = culc_fn(tmp, fn, fn_keys) + 1
-        fn_keys.add(n)
-    return fn[n]
-
+X_mod_minus = X_%(popcount_X-1) if popcount_X > 1 else -1
+X_mod_plus = X_%(popcount_X+1)
 for i in range(N):
-    tmp = int(X[:i] + ('0' if X[i] == '1' else '1') + X[i+1:], 2)
-    print(culc_fn(tmp, fn, fn_keys))
+    if X[i] == '0':
+        popcount = popcount_X+1
+        X_i = (X_mod_plus + pow(2, N-i-1, popcount))%(popcount)
+    else:
+        if X_mod_minus == -1:
+            print(0)
+            continue
+        popcount = popcount_X-1
+        X_i = (X_mod_minus - pow(2, N-i-1, popcount))%(popcount)
+    ans = 1
+    while X_i > 0:
+        X_i %= bin(X_i).count('1')
+        ans += 1
+    print(ans)

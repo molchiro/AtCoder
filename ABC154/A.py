@@ -1,8 +1,5 @@
 ST = input().split()
-A, B = list(map(int, input().split()))
+AB = list(map(int, input().split()))
 U = input()
-idx = ST.index(U)
-if idx == 0:
-    print(A-1, B)
-else:
-    print(A, B-1)
+AB[ST.index(U)] -= 1
+print(*AB)

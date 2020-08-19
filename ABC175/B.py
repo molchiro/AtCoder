@@ -1,13 +1,11 @@
+from collections import Counter
 from itertools import combinations
 
 N = int(input())
-L = list(map(int, input().split()))
-
-def f(a, b, c):
-    return len(set([a, b, c])) == 3 and a+b>c and b+c>a and c+a>b
-
+L = Counter(list(map(int, input().split())))
 ans = 0
-for a, b, c in combinations(L, 3):
-    if f(a, b, c):
-        ans += 1
+for sides in combinations(L.keys(), 3):
+    a, b, c = sorted(sides)
+    if a + b > c:
+        ans += L[a]*L[b]*L[c]
 print(ans)

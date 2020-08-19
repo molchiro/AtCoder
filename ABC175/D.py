@@ -1,29 +1,26 @@
+from itertools import accumulate 
+
 N, K = list(map(int, input().split()))
 P = list(map(lambda x: int(x) - 1, input().split()))
 C = list(map(int, input().split()))
-ans = -10**9-1
+
+ans = -10**18-1
+seen = [False]*N
 for i in range(N):
-    cumsum = [0]*(N+1)
-    seen = [-1]*N
-    K_ = K
+    if seen[i]:
+        continue
+    loop = []
     now = i
-    j = 0
-    while K_ > 0 and seen[now] == -1:
-        seen[now] = 1
+    while seen[now] == False:
+        seen[now] = True
+        loop.append(C[now])
         now = P[now]
-        cumsum[j+1] = cumsum[j] + C[now]
-        K_ -= 1
-        j += 1
-    if K_ == 0:
-        ans = max(ans, max(cumsum[1:j+1]))
-    else:
-        if cumsum[j] > 0:
-            loop_size = j
-            loop_n = K//loop_size - 1
-            K_ %= loop_size
-            tmp = loop_n*cumsum[loop_size]
-            tmp += max(max(cumsum[1:loop_size+1]), cumsum[loop_size] + max(cumsum[0:K_+1]))
-            ans = max(ans, tmp)
-        else:
-            ans = max(ans, max(cumsum[1:j+1]))
+    loop_size = len(loop)
+    loop_score = sum(loop)
+    cumsum = list(accumulate(loop+loop))
+    for j in range(1, min(K, loop_size)+1):
+        for l in range(loop_size):
+            r = l+j
+            subseq = cumsum[r] - cumsum[l]
+            ans = max(ans, subseq, subseq+loop_score*((K-j)//loop_size))
 print(ans)

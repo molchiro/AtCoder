@@ -13,11 +13,16 @@ for _ in range(M):
 r_max = max(row)
 c_max = max(col)
 ans = 0
-# print([h for h in range(H) if row[h] == r_max])
-# print([w for w in range(W) if col[w] == c_max])
-for h in [h for h in range(H) if row[h] == r_max]:
-    for w in [w for w in range(W) if col[w] == c_max]:
-        # print(r_max + c_max - 1 if (h, w) in targets else 0)
-        ans = max(ans, r_max + c_max - (1 if (h, w) in targets else 0))
-print(ans)
 
+maxed_h = set([h for h in range(H) if row[h] == r_max])
+maxed_w = set([w for w in range(W) if col[w] == c_max])
+bomb_option_sites_n = len(maxed_h)*len(maxed_w)
+targets_on_bomb_option = 0
+for th, tw in targets:
+    if th in maxed_h and tw in maxed_w:
+        targets_on_bomb_option += 1
+
+if bomb_option_sites_n == targets_on_bomb_option:
+    print(r_max + c_max - 1)
+else:
+    print(r_max + c_max)

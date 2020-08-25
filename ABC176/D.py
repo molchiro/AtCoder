@@ -24,7 +24,7 @@ while queue:
     maze[h][w] = warp_n
     # walk
     for dh, dw in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            if h+dh < 0 or w+dw < 0 or h+dh >= H or w+dw >= W:
+            if not (0 <= h+dh < H and 0 <= w+dw < W):
                 continue
             if S[h+dh][w+dw] == '#':
                 continue
@@ -32,7 +32,7 @@ while queue:
     # warp
     for dh in range(-2, 3):
         for dw in range(-2, 3):
-            if h+dh < 0 or w+dw < 0 or h+dh >= H or w+dw >= W:
+            if not (0 <= h+dh < H and 0 <= w+dw < W):
                 continue
             if S[h+dh][w+dw] == '#':
                 continue

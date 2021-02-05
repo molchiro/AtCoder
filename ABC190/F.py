@@ -1,34 +1,32 @@
-N = int(input())
-A = list(map(lambda x: int(x) + 1, input().split()))
+class BIT:
+    # 非負整数に対応するため、0-indexedで実装
+    def __init__(self, size):
+        self.size = size + 1
+        self.data = [0]*self.size
 
-class Bit:
-    def __init__(self, n):
-        self.size = n
-        self.tree = [0] * (n + 1)
-  
-    def sum(self, i):
-        s = 0
-        while i > 0:
-            s += self.tree[i]
-            i -= i & -i
-        return s
-  
     def add(self, i, x):
+        i += 1
         while i <= self.size:
-            self.tree[i] += x
+            self.data[i-1] += x
             i += i & -i
- 
-bit = Bit(3*10**5+10)
-ans = 0
- 
-for i, a in enumerate(A):
-    bit.add(a, 1)
-    ans += i + 1 - bit.sum(a)
- 
-print(ans)
+        
+    def sum(self, i):
+        i += 1
+        res = 0
+        while i > 0:
+            res += self.data[i-1]
+            i -= i & -i
+        return res
 
-for i in range(N-1):
-    a = A[i]
-    ans -= a
-    ans += N-a+1
-    print(ans)
+N = int(input())
+A = list(map(int, input().split()))
+
+BIT_ = BIT(3*10**5)
+total_invs = 0
+for i, a in enumerate(A):
+    total_invs += i - BIT_.sum(a)
+    BIT_.add(a, 1)
+
+for a in A:
+    print(total_invs)
+    total_invs += N - 2*a - 1

@@ -34,15 +34,11 @@ ST = SegTree([0]*(N+1), lambda x, y: min(x, y), id_el=float('inf'))
 for i in range(M):
     ST.add(A[i], 1)
 
-# print(ST.tree)
-
 ans = ST.query()
-# print(ans)
 
 for i in range(1, N-M+1):
     ST.add(A[i+M-1], 1)
     ST.add(A[i-1], -1)
     ans = min(ST.query(), ans)
-    # print(ST.tree)
 
 print(ans)

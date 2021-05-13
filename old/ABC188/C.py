@@ -1,0 +1,6 @@
+N = int(input())
+A = list(map(int, input().split()))
+left_winner = max(A[:2**(N-1)])
+right_winner = max(A[2**(N-1):])
+semi_finalist = min(left_winner, right_winner)
+print(A.index(semi_finalist)+1)

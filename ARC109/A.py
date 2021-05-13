@@ -12,4 +12,4 @@ if diff > 0:
 else:
     diff = -diff
     ans = min(x+y*diff, x+y*(diff+1), x+2*x*diff)
-print(ans)
+print

@@ -1,5 +1,4 @@
-H, W = list(map(int, input().split()))
-S = [input() for _ in range(H)]
+from collections import defaultdict
 
 class union_find:
     def __init__(self, N):
@@ -20,22 +19,24 @@ class union_find:
         if not self.same(a, b):
             self.par[self.root(a)] = self.root(b)
 
-UF = union_find(H+W)
+N, M = list(map(int, input().split()))
+A = list(map(int, input().split()))
+B = list(map(int, input().split()))
+C = [b - a for a, b in zip(A, B)]
 
-for h in range(H):
-    for w in range(W):
-        if S[h][w] == '#':
-            UF.unite(h, H+w)
-UF.unite(0, H)
-UF.unite(0, H+W-1)
-UF.unite(H-1, H)
-UF.unite(H-1, H+W-1)
+UF = union_find(N)
+for i in range(M):
+    c, d = list(map(lambda x: int(x) - 1, input().split()))
+    UF.unite(c, d)
 
-row = set()
-for i in range(H):
-    row.add(UF.root(i))
-col = set()
-for i in range(W):
-    col.add(UF.root(H+i))
+for i in range(N):
+    UF.root(i)
 
-print(min(len(row)-1, len(col)-1))
+dd = defaultdict(int)
+for i in range(N):
+    dd[UF.root(i)] += C[i]
+
+if all([x == 0 for x in dd.values()]):
+    print('Yes')
+else:
+    print('No')

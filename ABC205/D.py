@@ -1,17 +1,18 @@
-from bisect import bisect_right
-
 N, Q = list(map(int, input().split()))
 A = list(map(int, input().split()))
+K = [int(input()) for _ in range(Q)]
+
 A.sort()
-head = [1]
-n = [1]
-for a in A:
-    if head[-1] == a:
-        head[-1] = a+1
-    else:
-        n.append(n[-1]+a-head[-1])
-        head.append(a+1)
-for _ in range(Q):
-    K = int(input())
-    idx = bisect_right(n, K) - 1
-    print(head[idx] + K - n[idx])
+A.append(float('inf'))
+ans = {}
+now = 1
+skipped = 0
+for k in sorted(K):
+    while k+skipped >= A[skipped]:
+        now = A[skipped] + skipped + 1
+        skipped += 1
+    now = k + skipped
+    ans[k] = now
+
+for k in K:
+    print(ans[k])

@@ -1,41 +1,28 @@
-def gcd(a, b):
-    if a < b:
-        tmp = a
-        a = b
-        b = tmp
-
-    r = a % b
-    while r!=0:
-        a = b
-        b = r
-        r = a % b
-    return b
+from math import gcd
 
 def lcm(a, b):
     return int(a * b / gcd(a, b))
 
-
 N = int(input())
-pairs = set()
-a, b = list(map(int, input().split()))
-if a > b:
-    a, b = b, a
-pairs.add((a, b))
-for _ in range(N-1):
-    next_pairs = set()
-    a_1, b_1 = list(map(int, input().split()))
-    for a_2, b_2 in pairs:
-        a_3, b_3 = gcd(a_1, a_2), gcd(b_1, b_2)
-        if a_3 > b_3:
-            a_3, b_3 = b_3, a_3
-        next_pairs.add((a_3, b_3))
-        a_3, b_3 = gcd(a_1, b_2), gcd(b_1, a_2)
-        if a_3 > b_3:
-            a_3, b_3 = b_3, a_3
-        next_pairs.add((a_3, b_3))
-    pairs = next_pairs
-    # print('hige', len(pairs), pairs)
+card_packs = [tuple(map(int, input().split())) for _ in range(N)]
+
+# i-1番目まででありえるgcdの組み合わせとi番目の袋からの取り出し方の組み合わせを全て試す
+dp = [set() for _ in range(N)]
+dp[0].add(card_packs[0])
+
+def f(prev_gcds, pack):
+    ret = []
+    for X, Y in prev_gcds:
+        ret.append((gcd(X, pack[0]), gcd(Y, pack[1])))
+        ret.append((gcd(X, pack[1]), gcd(Y, pack[0])))
+    ret= set([tuple(sorted(x)) for x in ret])
+    return ret
+
+for i in range(1, N):
+    pack = card_packs[i]
+    dp[i] = f(dp[i-1], pack)
+
 ans = 0
-for a, b in pairs:
-    ans = max(ans, lcm(a, b))
+for X, Y in dp[-1]:
+    ans = max(ans, lcm(X, Y))
 print(ans)

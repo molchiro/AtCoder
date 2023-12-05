@@ -1,17 +1,16 @@
-from itertools import product
 N = int(input())
-if N%2:
-    exit()
-else:
-    ans = []
-    for pattern in product([-1, 1], repeat=N):
-        accum = 0
-        for e in pattern:
-            accum += e
-            if accum < 0:
-                break
+
+for i in range(2**N):
+    S = format(i, f'0{N}b')
+    tmp = 0
+    for s in S:
+        if s == '0':
+            tmp += 1
         else:
-            if accum == 0:
-                ans.append(''.join([('', '(', ')')[e] for e in pattern]))
-ans.sort()
-print(*ans, sep='\n')
+            tmp -= 1
+        
+        if tmp < 0:
+            break
+    else:
+        if tmp == 0:
+            print(''.join(['(' if s == '0' else ')' for s in S]))

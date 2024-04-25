@@ -1,7 +1,7 @@
 from collections import deque
 
 class Graph:
-    '''グラフを扱うクラス'''
+    '''無向グラフを扱うクラス'''
     def __init__(self, nodes_number, paths) -> None:
         self.nodes_number = nodes_number
         self.to_nodes = [[] for _ in range(nodes_number)]

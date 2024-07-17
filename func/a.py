@@ -7,6 +7,7 @@ def sign(x):
 def popcount(x):
     '''xの立っているビット数をカウントする関数
     (xは64bit整数)'''
+    # int.bit_count()が3.10以降はある
 
     # 2bitごとの組に分け、立っているビット数を2bitで表現する
     x = x - ((x >> 1) & 0x5555555555555555)
@@ -62,3 +63,28 @@ def prime_factorize(n):
     if n != 1:
         a.append(n)
     return a
+
+# nCr 前計算ごとコピペする
+mod = 998244353
+N = 10 ** 4  # N は必要分だけ用意する
+fact = [1, 1]  # fact[n] = (n! mod p)
+factinv = [1, 1]  # factinv[n] = ((n!)^(-1) mod p)
+inv = [0, 1]  # factinv 計算用
+ 
+for i in range(2, N + 1):
+    fact.append((fact[-1] * i) % mod)
+    inv.append((-inv[mod % i] * (mod // i)) % mod)
+    factinv.append((factinv[-1] * inv[-1]) % mod)
+
+def cmb(n, r, p):
+    if (r < 0) or (n < r):
+        return 0
+    r = min(r, n - r)
+    return fact[n] * factinv[r] * factinv[n-r] % p
+
+
+def is_kaibun(s):
+    for i in range(len(s)//2):
+        if s[i] != s[-i-1]:
+            return False
+    return True

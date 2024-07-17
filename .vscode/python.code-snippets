@@ -1,0 +1,131 @@
+{
+	"input_int": {
+		"prefix": "ii",
+		"body": [
+			"int(input())"
+		],
+		"description": "get input as int"
+	},
+	"input_int_list": {
+		"prefix": "iil",
+		"body": [
+			"list(map(int, input().split()))"
+		],
+		"description": "get input as int list"
+	},
+	"input_int_list_decremented": {
+		"prefix": "iild",
+		"body": [
+			"list(map(lambda x: int(x) - 1, input().split()))"
+		],
+		"description": "get input as int decremented list"
+	},
+	"input_int_list_with_index": {
+		"prefix": "iilwi",
+		"body": [
+			"list(map(tuple, enumerate(map(int, input().split()))))"
+		],
+		"description": "get input as tuple(index, int) list"
+	},
+	"input_str_list": {
+		"prefix": "isl",
+		"body": [
+			"input().split()"
+		],
+		"description": "get input as stßr list"
+	},
+	"print_n": {
+		"prefix": "printn",
+		"body": [
+			"print($1, sep='\\n')"
+		],
+		"description": "print with \n separator"
+	},
+	"for _": {
+		"prefix": "for _",
+		"body": [
+			"for _ in range(${1:N})"
+		],
+		"description": "for _ in N"
+	},
+	"for i": {
+		"prefix": "for i",
+		"body": [
+			"for ${1:i} in range(${2:N})"
+		],
+		"description": "for i in N"
+	},
+	"print Yes or No": {
+		"prefix": "print_y_n",
+		"body": [
+			"print('Yes' if ${1} else 'No')"
+		],
+		"description": "print Yes or No"
+	},
+	"field": {
+		"prefix": "field",
+		"body": "field = [[${1:-1}]*(W+2)] + [[${1:-1}]+ [${2:0}]*W + [${1:-1}] for _ in range(H)] + [[${1:-1}]*(W+2)]"
+	},
+	"2d": {
+		"prefix": "2d",
+		"body": "[[${1:0}]*${2:N1} for _ in range(${3:N2})]"
+	},
+	"3d": {
+		"prefix": "3d",
+		"body": "[[[${1:0}]*${2:N1} for _ in range(${3:N2})] for _ in range(${4:N3})]"
+	},
+	"move_cross": {
+		"prefix": "move_cross",
+		"body": [
+			"def move(x, y):",
+			"    return [(x+1, y), (x, y+1), (x-1, y), (x, y-1)]"
+		]
+	},
+	"move_around": {
+		"prefix": "move_around",
+		"body": [
+			"def move(x, y):",
+			"    return [(x+1, y), (x+1, y+1), (x, y+1), (x-1, y+1), (x-1, y), (x-1, y-1), (x, y-1), (x+1, y-1)]"
+		]
+	},
+	"rotate": {
+		"prefix": "rotate",
+		"body": [
+			"${1:field} = ${1:field}[::-1]",
+			"${1:field} = list(map(list, zip(*${1:field})))"
+		]
+	},
+	"import heapq": {
+		"prefix": "from heapq",
+		"body": "from heapq import heapify, heappop, heappush"
+	},
+	"set recursion": {
+		"prefix": "set rec",
+		"body": [
+			"import sys",
+			"sys.setrecursionlimit(10**9)"
+		]
+	},
+	"graph": {
+		"prefix": "graph",
+		"body": [
+			"G = [[] for _ in range(${1:N})]",
+			"for _ in range(${2:M}):",
+			"    a, b = list(map(lambda x: int(x) - 1, input().split()))",
+			"    G[a].append(b)",
+			"    G[b].append(a)"
+		]
+	},
+	"float_inf": {
+		"prefix": "finf",
+		"body": "float('inf')"
+	},
+	"neighbours_4": {
+		"prefix": "n4",
+		"body": "[(1, 0), (-1, 0), (0, 1), (0, -1)]"
+	},
+	"neighbours_8": {
+		"prefix": "n8",
+		"body": "[(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (-1, 1), (1, -1)]"
+	}
+}

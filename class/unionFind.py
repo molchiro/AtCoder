@@ -35,7 +35,7 @@ class UnionFind:
 
 
 @dataclasses.dataclass
-class UnionFindWidhPotentioal:
+class UnionFindWithPotentioal:
     N: int
     parent: list[int] = dataclasses.field(init=False)
     potential: list[int] = dataclasses.field(init=False)

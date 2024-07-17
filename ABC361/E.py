@@ -1,49 +1,45 @@
 from collections import defaultdict, deque
 
-class TreeWithWeight:
+class Tree:
+    '''木構造を扱うクラス'''
     def __init__(self):
         self.graph = defaultdict(list)
     
-    def add_edge(self, u, v, weight):
-        self.graph[u].append((v, weight))
-        self.graph[v].append((u, weight))
+    def add_edge(self, u, v, w=1):
+        self.graph[u].append((v, w))
+        self.graph[v].append((u, w))
     
-    def farthest(self, start):
-        dq = deque([start])
-        weight = [-1] * len(self.graph)
-        weight[start] = 0
+    def farthest(self, s):
+        '''node s からみて一番遠いnodeとその距離を返す'''
+        dq = deque([s])
+        costs = [-1] * len(self.graph)
+        costs[s] = 0
         
         while dq:
             u = dq.popleft()
-            w_u = weight[u]
+            c = costs[u]
             
             for v, w in self.graph[u]:
-                if weight[v] != -1:
+                if costs[v] != -1:
                     continue
 
-                weight[v] = w_u + w
+                costs[v] = c + w
                 dq.append(v)
-
-        f_node = -1
-        f_weight = 0
-
-        for i, w in enumerate(weight):
-            if w > f_weight:
-                f_weight = w
-                f_node = i    
-        return f_node, f_weight
+        node, cost = max(enumerate(costs), key=lambda x: x[1])
+        return node, cost
     
-    def tree_diameter(self):
+    def diameter(self):
+        '''木の直径'''
         f1, _ = self.farthest(0)
         _, w2 = self.farthest(f1)   
         return w2
 
 N = int(input())
-TWW = TreeWithWeight()
+tree = Tree()
 ans = 0
 for _ in range(N-1):
     A, B, C = list(map(int, input().split()))
-    TWW.add_edge(A-1, B-1, C)
+    tree.add_edge(A-1, B-1, C)
     ans += C*2
 
-print(ans - TWW.tree_diameter())
+print(ans - tree.diameter())

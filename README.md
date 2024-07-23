@@ -20,3 +20,14 @@ from atcoder.modint import Modint, ModContext
 mod = 998244353
 with ModContext(mod):
 ```
+
+## メモ
+
+### グリッド系の問題のコーナーケース
+
+H=1, W=1が危ない
+
+### heapqの次元
+
+なるべく1次元で扱う。  
+タプルにする場合も、(a, b, c)よりも(a, (b, c))の方が早い

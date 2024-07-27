@@ -21,6 +21,16 @@ mod = 998244353
 with ModContext(mod):
 ```
 
+### メモ化再帰
+
+```
+from functools import cache
+
+@cache
+def solve():
+    return
+```
+
 ## メモ
 
 ### グリッド系の問題のコーナーケース

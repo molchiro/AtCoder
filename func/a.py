@@ -1,6 +1,9 @@
 def manhattan_d(u, v):
     return abs(v[0]-u[0])+abs(v[1]-u[1])
 
+def euclidian_d(u, v):
+    return ((u[0]-v[0])**2 + (u[1]-v[1])**2)**0.5
+
 def sign(x):
     return 0 if abs(x) == 0 else x // abs(x)
 
@@ -88,3 +91,45 @@ def is_kaibun(s):
         if s[i] != s[-i-1]:
             return False
     return True
+
+def z_algorithm(s):
+    """Zアルゴリズム
+
+    Args:
+        s (str): 入力文字列
+
+    Returns:
+        list: 各インデックスにおけるZ値のリスト
+    """
+    n = len(s)
+    z = [0] * n
+    z[0] = n
+    l, r = 0, 0
+    for i in range(1, n):
+        if i <= r:
+            z[i] = min(r - i + 1, z[i - l])
+        while i + z[i] < n and s[z[i]] == s[i + z[i]]:
+            z[i] += 1
+        if i + z[i] - 1 > r:
+            l, r = i, i + z[i] - 1
+    return z
+
+from itertools import accumulate
+def cumsum(input_list, mod=None, initial=None):
+    func = (lambda x, y: x+y) if (mod == None) else (lambda x, y: (x+y)%mod)
+    return list(accumulate(input_list, func=func, initial=initial))
+
+def sieve_of_eratosthenes(x):
+    nums = [i for i in range(x+1)]
+
+    root = int(pow(x,0.5))
+    for i in range(2,root + 1):
+        if nums[i] != 0:
+            for j in range(i, x+1):
+                if i*j >= x+1:
+                    break
+                nums[i*j] = 0
+
+    primes = sorted(list(set(nums)))[2:]
+
+    return primes

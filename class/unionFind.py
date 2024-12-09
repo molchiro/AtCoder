@@ -26,6 +26,8 @@ class UnionFind:
     def unite(self, u: int, v: int) -> None:
         ru = self.root(u)
         rv = self.root(v)
+        if ru == rv:
+            return
         # サイズが小さい方を大きい方に従属させる
         if self.size(ru) > self.size(rv):
             u, v = v, u

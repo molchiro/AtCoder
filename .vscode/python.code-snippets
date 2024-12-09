@@ -1,76 +1,91 @@
 {
 	"input_int": {
+		"description": "get input as int",
 		"prefix": "ii",
 		"body": [
 			"int(input())"
 		],
-		"description": "get input as int"
 	},
 	"input_int_list": {
+		"description": "get input as int list",
 		"prefix": "iil",
 		"body": [
 			"list(map(int, input().split()))"
 		],
-		"description": "get input as int list"
 	},
 	"input_int_list_decremented": {
+		"description": "get input as int decremented list",
 		"prefix": "iild",
 		"body": [
 			"list(map(lambda x: int(x) - 1, input().split()))"
 		],
-		"description": "get input as int decremented list"
 	},
 	"input_int_list_with_index": {
+		"description": "get input as tuple(index, int) list",
 		"prefix": "iilwi",
 		"body": [
 			"list(map(tuple, enumerate(map(int, input().split()))))"
 		],
-		"description": "get input as tuple(index, int) list"
 	},
 	"input_str_list": {
+		"description": "get input as stßr list",
 		"prefix": "isl",
 		"body": [
 			"input().split()"
 		],
-		"description": "get input as stßr list"
 	},
 	"print_n": {
+		"description": "print with \n separator",
 		"prefix": "printn",
 		"body": [
 			"print($1, sep='\\n')"
 		],
-		"description": "print with \n separator"
 	},
 	"for _": {
+		"description": "for _ in N",
 		"prefix": "for _",
 		"body": [
 			"for _ in range(${1:N})"
 		],
-		"description": "for _ in N"
 	},
 	"for i": {
+		"description": "for i in N",
 		"prefix": "for i",
 		"body": [
 			"for ${1:i} in range(${2:N})"
 		],
-		"description": "for i in N"
 	},
 	"print Yes or No": {
+		"description": "print Yes or No",
 		"prefix": "print_y_n",
 		"body": [
 			"print('Yes' if ${1} else 'No')"
 		],
-		"description": "print Yes or No"
 	},
-	"field": {
-		"prefix": "field",
+	"create field": {
+		"description": "入力より一回り大きい２次元リスト",
+		"prefix": "create field",
 		"body": "field = [[${1:-1}]*(W+2)] + [[${1:-1}]+ [${2:0}]*W + [${1:-1}] for _ in range(H)] + [[${1:-1}]*(W+2)]"
 	},
+	"create field and get input": {
+		"description": ".と#の列から盤面を作る",
+		"prefix": "create field and get input",
+		"body": [
+			"field = [[-1]*(W+2)] + [[-1]+ [0]*W + [-1] for _ in range(H)] + [[-1]*(W+2)]",
+			"for h in range(H):",
+			"    C = input()",
+			"    for w in range(W):",
+			"        if C[w] == '#':",
+			"            field[h+1][w+1] = -1",
+		]
+	},
 	"2d": {
+		"description": "二次元配列",
 		"prefix": "2d",
 		"body": "[[${1:0}]*${2:N1} for _ in range(${3:N2})]"
 	},
 	"3d": {
+		"description": "三次元配列",
 		"prefix": "3d",
 		"body": "[[[${1:0}]*${2:N1} for _ in range(${3:N2})] for _ in range(${4:N3})]"
 	},
@@ -99,6 +114,10 @@
 		"prefix": "from heapq",
 		"body": "from heapq import heapify, heappop, heappush"
 	},
+	"import bisect": {
+		"prefix": "from bisect",
+		"body": "from bisect import bisect_left, bisect_right"
+	},
 	"set recursion": {
 		"prefix": "set rec",
 		"body": [
@@ -117,7 +136,7 @@
 		]
 	},
 	"float_inf": {
-		"prefix": "finf",
+		"prefix": "inf",
 		"body": "float('inf')"
 	},
 	"neighbours_4": {
@@ -127,5 +146,33 @@
 	"neighbours_8": {
 		"prefix": "n8",
 		"body": "[(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (-1, 1), (1, -1)]"
-	}
+	},
+	"walk map": {
+		"prefix": "walk map",
+		"body": "{'U': (-1, 0), 'D': (1, 0), 'R': (0, 1), 'L': (0, -1)}"
+	},
+	"walk function": {
+		"prefix": "walk func",
+		"body": [
+    		"# U, D, R, Lを渡して移動後の座標を返す",
+			"def walk(now, direction):",
+            "    h, w = now",
+            "    walk_map = {'U': (-1, 0), 'D': (1, 0), 'R': (0, 1), 'L': (0, -1)}",
+            "    dh, dw = walk_map[direction]",
+            "    return (h+dh, w+dw)",
+		]
+	},
+	"nibutan": {
+		"prefix": "nibutan",
+		"body": [
+			"ok = 0",
+			"ng = 10**18",
+			"while ng - ok > 1:",
+			"    test = (ng+ok)//2",
+			"    if ${1:condition}:",
+            "        ok = test",
+        	"    else:",
+            "        ng = test",
+		]
+	},
 }

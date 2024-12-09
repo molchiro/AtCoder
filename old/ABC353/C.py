@@ -1,9 +1,9 @@
+from itertools import accumulate
+
 N = int(input())
 A = list(map(int, input().split()))
 A.sort()
-cumsum = [0]
-for a in A:
-    cumsum.append(cumsum[-1]+a)
+cumsum = list(accumulate(A, initial=0))
 ans = 0
 from bisect import bisect_left
 for i in range(N-1):

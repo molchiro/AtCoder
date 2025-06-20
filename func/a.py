@@ -133,3 +133,23 @@ def sieve_of_eratosthenes(x):
     primes = sorted(list(set(nums)))[2:]
 
     return primes
+
+# 2点間を通る直線の傾きと切片
+def get_line_equation_from_points(p1, p2):
+    x1, y1 = p1
+    x2, y2 = p2
+    a = (y2-y1)/(x2-x1)
+    b = (x2*y1-x1*y2)/(x2-x1)
+    return a, b
+
+# 配列を渡すと最小増加列を返す
+import bisect
+def LIS(seq):
+    res = [seq[0]]
+    for i in range(len(seq)):
+        if seq[i] > res[-1]:
+            res.append(seq[i])
+        else:
+            res[bisect.bisect_left(res, seq[i])] = seq[i]
+
+    return res

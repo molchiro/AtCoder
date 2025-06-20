@@ -61,6 +61,10 @@ H=1, W=1が危ない
 
 `H, W <= 4*10^5` かと思いきや `H*W <= 4*10^5` でした
 
+### 直線と線分をちゃんと読む
+
+特に円の問題でミスりがち
+
 ### heapqの次元
 
 なるべく1次元で扱う。  
@@ -69,4 +73,14 @@ H=1, W=1が危ない
 ### インタラクティブ問題のテスト
 
 ARC184参照
+
+
+The following code is what I wrote to solve a problem in an AtCoder contest. When using generative AI to translate programming languages during an ongoing AtCoder contest, there are the following restrictions: "It is absolutely necessary to include the original code at the beginning of the submission as a comment or similar." "Only translations that do not alter the algorithm are permitted. In particular, any changes that would affect the time complexity are strictly prohibited." For any parts that cannot be directly translated, please mark them as "FAILED" and leave them unconverted. Following these strict AtCoder rules, please translate the following code from python to C++.
+
+# use longlong if translate into C++
+
+
+## 身についてない発想
+
+二次元の問題でH*Wに制約があるとき、短い方で全探索することがある。回転すれば場合分けしなくていい。
 

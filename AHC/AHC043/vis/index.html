@@ -1,0 +1,188 @@
+
+<html>
+  <head>
+    <title>Visualizer</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+    <script src="./jquery-1.9.1.min.js"></script>
+    <style>
+      .info_item {
+        display: flex;
+        padding: 5px 0;
+        align-items: center;
+      }
+      .info_title {
+        width: 70px;
+        text-align: right;
+        padding-right: 10px;
+      }
+      .info_value {
+        font-family: monospace;
+        font-size: large;
+      }
+      #result p {
+        position: absolute;
+        margin: 0;
+      }
+      #error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="lang-en">
+      <p>
+        The problem statement is <a href="https://atcoder.jp/contests/ahc043/tasks/ahc043_a">here</a>.
+      </p>
+      Usage
+      <details open>
+        <summary>Details</summary>
+        <p>
+          Changing the value in the Seed field will generate the corresponding input to the Input field.<br>
+          By setting the M, K fields to values which meet the constraints of the input, you can change the input to the specified M, K values.<br>
+          Pressing the Download button will download the inputs for seed values seed, seed+1, ..., seed+#cases-1 at once.<br>
+        </p>
+        <p>
+          By running your program locally against the generated input and pasting the output of your program into the Output field, the visualization results will be displayed.<br>
+          Pressing the ▶ button starts animation.<br>
+          By pressing the Save as PNG or Save as Animation GIF button, you can download the visualization results.<br>
+        </p>
+        <p>
+          You can quickly switch between multiple outputs by pressing the Select File button at the top and selecting the directory containing the output files.<br>
+          By naming the output file 1234.txt or abcd_1234.txt, the seed number (in this case 1234) is automatically set when the file is selected.<br>
+        </p>
+        <p>
+          The red circles represent the presence of a house in the area, while the blue circles represent the presence of a workplace in the area.
+        </p>
+        <p>
+          When the checkbox for <b>enable interactivity</b> is checked, hovering over an area will display information about that area in a tooltip, and if there is a house or workplace in that area, the area where the other house or workplace exists will be displayed with a thick border.<br>
+          It is recommended to uncheck the option during animation display, as it may lead to decreased performance.<br>
+        </p>
+      </details>
+    </div>
+    <div class="lang-ja">
+      <p>
+        問題文は<a href="https://atcoder.jp/contests/ahc043/tasks/ahc043_a">こちら</a>。
+      </p>
+      使い方
+      <details open>
+        <summary>詳細</summary>
+        <p>
+          Seed 欄の値を変えると対応する入力が Input 欄に生成されます。<br>
+          M, K 欄を問題文中の入力の制約を満たす値に設定することで、入力を指定された M, K の値に変更できます。<br>
+          Download ボタンを押すと、シード値が seed, seed+1, ..., seed+#cases-1 に対応する入力を一括ダウンロードできます。<br>
+        </p>
+        <p>
+          生成された入力に対して解答プログラムをローカル実行し、プログラムの出力を Output 欄に貼り付けると、ビジュアライズ結果が表示されます。<br>
+          ▶ ボタンを押すと、アニメーションが開始します。<br>
+          Save as PNG や Save as Animation GIF ボタンを押すと、ビジュアライズ結果のダウンロードができます。<br>
+        </p>
+        <p>
+          上部の「ファイルを選択」ボタンを押して出力ファイルを含むディレクトリを選択することで、複数の出力を素早く切り替えることができるようになります。<br>
+          出力ファイル名を 1234.txt もしくは abcd_1234.txt という形式にすることで、ファイルを選択時に自動的にseed番号(この場合は1234)が設定されます。<br>
+        </p>
+        <p>
+          赤の丸はその区画に家が存在することを、青の丸はその区画に職場が存在することを表します。<br>
+        </p>
+        <p>
+          <b>enable interactivity</b> にチェックを入れると、区画にマウスホバーすることでその区画の情報をツールチップ表示し、その区画に家や職場がある場合、家または職場のもう一方が存在する区画を太枠で表示します。<br>
+          動作が重くなるため、アニメーション表示時にはチェックを外しておくことをおすすめします。<br>
+        </p>
+      </details>
+    </div>
+    <hr>
+    <p>
+      <label>
+        File:
+        <select id="fileSelect" disabled></select>
+      </label>
+      <input type="file" id="dirSelect" directory webkitdirectory>
+    </p>
+    <p>
+      <label>
+        Seed:
+        <input type="number" id="seed" value="0" min="0" max="18446744073709551615" onchange="generate()"/>
+      </label>&ensp;
+      <input type="checkbox" id="fix_M" onchange="generate()">fix M:
+      <input type="number" size="3" id="M" value="50" min="50" max="1600" disabled onchange="generate()"/>&ensp;
+      <input type="checkbox" id="fix_K" onchange="generate()">fix K:
+      <input type="number" size="5" id="K" value="11000" min="11000" max="20000" disabled onchange="generate()"/>&emsp;
+      <label>
+        #cases:
+        <input type="number" size="4" id="cases" value="100" min="1" max="10000">
+      </label>
+      <input type="button" id="download" value="Download" onclick="download()">
+    </p>
+    <p>
+      <label>
+        Input:<br>
+        <textarea id="input" rows="4" style="width:650px;" data-gramm_editor="false" oninput="updateOutput()"></textarea>
+      </label>
+    </p>
+    <p>
+      <label>
+        Output:<br>
+        <textarea id="output" rows="4" style="width:650px;" data-gramm_editor="false" oninput="updateOutput()"></textarea>
+      </label>
+    </p>
+    <p>
+      <input type="button" id="save_png" value="Save as PNG">&ensp;
+      <input type="button" id="save_gif" value="Save as Animation GIF">
+    </p>
+    <p style="display:flex;">
+      <input type="button" id="play" value="▶" style="width:32px;height:32px;bottom:5px;position:relative;">&ensp;
+      <label>
+        slow
+        <input type="range" id="speed" min="1" max="500" value="100" style="width:200px;">
+        fast&emsp;
+      </label>
+      <label>
+        turn:
+        <input type="number" id="turn" value="0" min="0" max="0" step="1" style="width:70px" onchange="update_t(this.value)"/>
+      </label>
+      <label style="margin-left:30px">
+        <input type="checkbox" id="interactive" style="" onchange="visualize()"/>
+        enable interactivity
+      </label>
+    </p>
+    <p>
+      <input type="range" id="t_bar" min="0" max="0" value="0" step="1" style="width:780px;" onchange="update_t(this.value)" oninput="update_t(this.value)">
+    </p>
+    <hr>
+    <p id="error"></p>
+    <div style="display:flex; gap:0px 20px; align-items:flex-start; flex-wrap:wrap;">
+      <div id="result" style="width:820px; height:820px">
+        <p id="svg_bg" />
+        <p id="svg_fg" />
+      </div>
+      <div class="info-container">
+        <div>
+          <div class="info_item">
+            <span class="info_title">Score:</span>
+            <span class="info_value" id="score"></span><br>
+          </div>
+          <div class="info_item">
+            <span class="info_title">Money:</span>
+            <span class="info_value" id="money"></span><br>
+          </div>
+          <div class="info_item">
+            <span class="info_title">Income:</span>
+            <span class="info_value" id="income"></span><br>
+          </div>
+          <div class="info_item">
+            <span class="info_title">Action:</span>
+            <span class="info_value" id="action"></span><br>
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <label>
+            Comment:<br>
+            <textarea id="comment" rows="4" style="width:250px; font-family:monospace;" data-gramm_editor="false" disabled></textarea>
+          </label>
+        </div>
+      </div>
+    </div>
+    <script src='./jszip.min.js'></script>
+    <script src='./gif.js'></script>
+    <script type="module" src='./index.js'></script>
+  </body>
+</html>

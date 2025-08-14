@@ -11,7 +11,7 @@ https://qiita.com/DaikiSuyama/items/11f63a94d63fa72e8bf4
 
 ### ceil
 
-`a+b-1//b`
+`(a+b-1)//b`
 
 ### スニペット
 
@@ -77,10 +77,17 @@ ARC184参照
 
 The following code is what I wrote to solve a problem in an AtCoder contest. When using generative AI to translate programming languages during an ongoing AtCoder contest, there are the following restrictions: "It is absolutely necessary to include the original code at the beginning of the submission as a comment or similar." "Only translations that do not alter the algorithm are permitted. In particular, any changes that would affect the time complexity are strictly prohibited." For any parts that cannot be directly translated, please mark them as "FAILED" and leave them unconverted. Following these strict AtCoder rules, please translate the following code from python to C++.
 
-# use longlong if translate into C++
-
-
 ## 身についてない発想
 
 二次元の問題でH*Wに制約があるとき、短い方で全探索することがある。回転すれば場合分けしなくていい。
 
+```
+'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+```
+
+## 意外と危ない
+
+### INF
+
+`float('inf')`を使うと上限のことを考えなくて良くなって便利だが、整数の方が当然早いし結構違う。
+INF = 10**18 くらいが

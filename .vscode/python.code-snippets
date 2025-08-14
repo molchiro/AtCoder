@@ -27,8 +27,15 @@
 			"list(map(tuple, enumerate(map(int, input().split()))))"
 		],
 	},
+	"input_str": {
+		"description": "get input as str",
+		"prefix": "is",
+		"body": [
+			"input()"
+		],
+	},
 	"input_str_list": {
-		"description": "get input as stßr list",
+		"description": "get input as str list",
 		"prefix": "isl",
 		"body": [
 			"input().split()"

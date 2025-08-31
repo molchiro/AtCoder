@@ -26,20 +26,23 @@ def popcount(x):
 
 # ワーシャル・フロイド
 def warshallFloyd(graph, INF):
-  N = len(graph)
-  # 初期値は入力をコピー
-  dp = []
-  for i in range(N):
-    dp.append(graph[i][:])
-  
-  # 3重ループで全ての頂点の間の距離を求める．
-  for k in range(N):
+    N = len(graph)
+    # 初期値は入力をコピー
+    dp = []
     for i in range(N):
-      for j in range(N):
-        if(dp[i][k] == INF or dp[k][j] == INF):continue
-        dp[i][j] = min(dp[i][j], dp[i][k]+dp[k][j])
+        dp.append(graph[i][:])
+    
+    # 3重ループで全ての頂点の間の距離を求める．
+    for k in range(N):
+        for i in range(N):
+            if dp[i][k] == INF:
+                continue
+            for j in range(N):
+                if dp[k][j] == INF:
+                    continue
+                dp[i][j] = min(dp[i][j], dp[i][k]+dp[k][j])
         
-  return dp
+    return dp
 
 # 拡張ユークリッドの互助法
 def extgcd(a, b):
@@ -153,3 +156,20 @@ def LIS(seq):
             res[bisect.bisect_left(res, seq[i])] = seq[i]
 
     return res
+
+# 線分P1P2と線分Q1Q2の交差判定
+def is_intersection(p1, p2, q1, q2):
+
+    c1 = (p2[0] - p1[0]) * (q1[1] - p1[1]) - (p2[1] - p1[1]) * (q1[0] - p1[0])
+    c2 = (p2[0] - p1[0]) * (q2[1] - p1[1]) - (p2[1] - p1[1]) * (q2[0] - p1[0])
+    c3 = (q2[0] - q1[0]) * (p1[1] - q1[1]) - (q2[1] - q1[1]) * (p1[0] - q1[0])
+    c4 = (q2[0] - q1[0]) * (p2[1] - q1[1]) - (q2[1] - q1[1]) * (p2[0] - q1[0])
+
+    if c1 == 0 and c2 == 0:
+        px = sorted([p1[0], p2[0]])
+        qx = sorted([q1[0], q2[0]])
+        py = sorted([p1[1], p2[1]])
+        qy = sorted([q1[1], q2[1]])
+        return (px[0] <= qx[1] and qx[0] <= px[1] and py[0] <= qy[1] and qy[0] <= py[1])
+
+    return c1 * c2 <= 0 and c3 * c4 <= 0

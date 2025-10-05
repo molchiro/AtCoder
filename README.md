@@ -89,5 +89,5 @@ The following code is what I wrote to solve a problem in an AtCoder contest. Whe
 
 ### INF
 
-`float('inf')`を使うと上限のことを考えなくて良くなって便利だが、整数の方が当然早いし結構違う。
-INF = 10**18 くらいが
+`float('inf')`を使うと上限のことを考えなくて良くなって便利だが、整数を扱う場合は速度に注意が必要。キャストに時間を食うっぽい。
+`INF = 10**18`としておけば大抵大丈夫。

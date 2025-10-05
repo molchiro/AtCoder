@@ -1,0 +1,322 @@
+#![allow(non_snake_case, unused_imports)]
+use bitvec::vec;
+use proconio::input;
+use rand::prelude::*;
+
+const SEED: u64 = 123456789; // 適当なシード値
+
+fn main() {
+    let start_time = std::time::Instant::now();
+
+    let mut rng = rand_chacha::ChaCha20Rng::seed_from_u64(SEED);
+
+    input! {
+        N: usize,
+        w: [[i32; N]; N],
+        d: [[i32; N]; N],
+    }
+
+    let input = Input {
+        N,
+        w: w.clone(),
+        d: d.clone(),
+    };
+
+    let mut state = State::new(&input);
+
+    // (0, 0) から遠い順に運ぶ
+    let mut cells: Vec<(usize, usize)> = (0..N).flat_map(|i| (0..N).map(move |j| (i, j))).collect();
+    cells.sort_by_key(|&(i, j)| -(i as i32 + j as i32)); // 距離が遠い順にソート
+
+    for (i, j) in cells {
+        // すでに運んでいるセルはスキップ
+        if state.w[i][j] == 0 {
+            continue;
+        }
+
+        // 行きがけに持つ荷物を決める
+        let mut waypoint = (0, 0);
+        for u in 0..i {
+            for v in 0..j {
+                if state.w[u][v] > 0 && state.d[u][v] - state.w[i][j] * (i as i32 + j as i32) > 0 {
+                    // 遠いところにある荷物を優先して持つ
+                    if waypoint.0 + waypoint.1 < u + v {
+                        waypoint = (u, v);
+                    }
+                }
+            }
+        }
+
+        // waypointまで移動
+        while state.pi != waypoint.0 || state.pj != waypoint.1 {
+            if state.pi < waypoint.0 {
+                state.apply('D').unwrap();
+            } else if state.pj < waypoint.1 {
+                state.apply('R').unwrap();
+            }
+        }
+        // waypointにいる荷物を持つ
+        if state.w[waypoint.0][waypoint.1] > 0 {
+            state.apply('1').unwrap();
+        }
+        // 目的地まで移動
+        while state.pi != i || state.pj != j {
+            if state.pi < i {
+                state.apply('D').unwrap();
+            } else if state.pj < j {
+                state.apply('R').unwrap();
+            } else if state.pi > i {
+                state.apply('U').unwrap();
+            } else if state.pj > j {
+                state.apply('L').unwrap();
+            }
+        }
+
+        // 持つ
+        state.apply('1').unwrap();
+        let state_copy = state.clone();
+
+        // 帰り方を複数パターン試す
+        let loop_start_time = std::time::Instant::now();
+        // let limit = 10.0 * (i as f64 + j as f64) / 20.0;
+        let limit = 47;
+        while loop_start_time.elapsed().as_millis() < limit as u128 {
+            let mut state_now = state_copy.clone();
+
+            // (0, 0) に戻る
+            while !(state_now.pi == 0 && state_now.pj == 0) {
+                let mut candidates = vec![];
+
+                if state_now.pi > 0 {
+                    candidates.push('U');
+                }
+                if state_now.pj > 0 {
+                    candidates.push('L');
+                }
+                // ランダムにcandidatesから選んで移動
+                if candidates.is_empty() {
+                    continue; // すでに目的地にいる
+                } else if candidates.len() == 1 {
+                    state_now.apply(candidates[0]).unwrap();
+                } else {
+                    let choice = rng.gen_range(0..candidates.len());
+                    state_now.apply(candidates[choice]).unwrap();
+                }
+                // もてるなら持つ
+                if state_now.w[state_now.pi][state_now.pj] > 0 {
+                    // 重さの差が大きいほど高い確率でスキップする
+                    // let top_w = state_now.stack.iter().map(|&(w, _)| w).max().unwrap_or(0);
+                    // let weight_diff = (top_w - state_now.w[state_now.pi][state_now.pj]).max(0);
+                    // if rng.gen_bool(weight_diff as f64 / 1000.0) {
+                    //     // println!("Skipping at ({}, {}) with weight diff {}", state_now.pi, state_now.pj, weight_diff);
+                    //     continue; // スキップ
+                    // } else {
+                    //     // println!("Applying '1' at ({}, {})", state_now.pi, state_now.pj);
+                    // }
+                    let res = state_now.apply('1');
+                    if let Err(e) = res {
+                        // println!("Error: {}", e);
+                    }
+                }
+            }
+            if state_now.done > state.done {
+                state = state_now;
+            }
+
+            if start_time.elapsed().as_millis() > 1980 {
+                break; // 時間切れなので1回だけ実行して終了
+            }
+        }
+    }
+
+    for c in state.actions.iter() {
+        println!("{}", c);
+    }
+}
+
+#[derive(Clone)]
+struct State {
+    pi: usize,
+    pj: usize,
+    w: Vec<Vec<i32>>,
+    d: Vec<Vec<i32>>,
+    stack: Vec<(i32, i32)>,
+    T: usize,
+    actions: Vec<char>,
+    done: usize,
+}
+
+impl State {
+    fn new(input: &Input) -> Self {
+        State {
+            pi: 0,
+            pj: 0,
+            w: input.w.clone(),
+            d: input.d.clone(),
+            stack: vec![],
+            T: 0,
+            actions: vec![],
+            done: 0,
+        }
+    }
+    fn apply(&mut self, c: char) -> Result<(), String> {
+        let N = self.w.len();
+        match c {
+            '1' => {
+                if self.w[self.pi][self.pj] == 0 {
+                    return Err(format!(
+                        "Operation 1 cannot be applied at ({}, {})",
+                        self.pi, self.pj
+                    ));
+                }
+                // 最短距離で(0, 0)に戻るルールとしたときに壊れるか先に計算
+                for i in 0..self.stack.len() {
+                    let (w, d) = self.stack[i];
+                    let new_d = d - self.w[self.pi][self.pj] * (self.pi as i32 + self.pj as i32);
+                    if new_d <= 0 {
+                        return Err(format!("The {}-th box is crushed", i));
+                    }
+                    self.stack[i] = (w, new_d);
+                }
+                self.stack
+                    .push((self.w[self.pi][self.pj], self.d[self.pi][self.pj]));
+                self.w[self.pi][self.pj] = 0;
+                self.d[self.pi][self.pj] = 0;
+            }
+            '2' => {
+                if self.w[self.pi][self.pj] > 0 {
+                    return Err(format!(
+                        "Operation 2 cannot be applied at ({}, {})",
+                        self.pi, self.pj
+                    ));
+                }
+                let (poped_w, poped_d) = self.stack.pop().ok_or("Stack is empty")?;
+                // おいたことによって耐久力が回復
+                for i in 0..self.stack.len() {
+                    let (w, d) = self.stack[i];
+                    let new_d = d - poped_w * (self.pi as i32 + self.pj as i32);
+                    self.stack[i] = (w, new_d);
+                }
+                self.w[self.pi][self.pj] = poped_w;
+                self.d[self.pi][self.pj] = poped_d;
+            }
+            c => {
+                if let Some(dir) = DIR.iter().position(|&d| d == c) {
+                    let (di, dj) = DIJ[dir];
+                    // println!("{}, {}, {}, {}", di, dj, self.pi, self.pj);
+                    let ni = self.pi + di;
+                    let nj = self.pj + dj;
+                    if ni >= N || nj >= N {
+                        return Err(format!(
+                            "Operation {} cannot be applied at ({}, {})",
+                            c, self.pi, self.pj
+                        ));
+                    }
+                    self.pi = ni;
+                    self.pj = nj;
+                    self.T += 1;
+                    if self.pi == 0 && self.pj == 0 {
+                        self.done += self.stack.len();
+                        self.stack.clear();
+                    }
+                } else {
+                    return Err(format!("Invalid operation: {}", c));
+                }
+            }
+        }
+        self.actions.push(c);
+        Ok(())
+    }
+    fn roleback(&mut self) -> Result<(), String> {
+        if let Some(c) = self.actions.pop() {
+            match c {
+                '1' => {
+                    if self.w[self.pi][self.pj] > 0 {
+                        return Err(format!(
+                            "Operation 2 cannot be applied at ({}, {})",
+                            self.pi, self.pj
+                        ));
+                    }
+                    let (poped_w, poped_d) = self.stack.pop().ok_or("Stack is empty")?;
+                    // おいたことによって耐久力が回復
+                    for i in 0..self.stack.len() {
+                        let (w, d) = self.stack[i];
+                        let new_d = d - poped_w * (self.pi as i32 + self.pj as i32);
+                        self.stack[i] = (w, new_d);
+                    }
+                    self.w[self.pi][self.pj] = poped_w;
+                    self.d[self.pi][self.pj] = poped_d;
+                }
+                '2' => {
+                    if self.w[self.pi][self.pj] == 0 {
+                        return Err(format!(
+                            "Operation 1 cannot be applied at ({}, {})",
+                            self.pi, self.pj
+                        ));
+                    }
+                    // 最短距離で(0, 0)に戻るルールとしたときに壊れるか先に計算
+                    for i in 0..self.stack.len() {
+                        let (w, d) = self.stack[i];
+                        let new_d =
+                            d - self.w[self.pi][self.pj] * (self.pi as i32 + self.pj as i32);
+                        if new_d <= 0 {
+                            return Err(format!("The {}-th box is crushed", i));
+                        }
+                        self.stack[i] = (w, new_d);
+                    }
+                    self.stack
+                        .push((self.w[self.pi][self.pj], self.d[self.pi][self.pj]));
+                    self.w[self.pi][self.pj] = 0;
+                    self.d[self.pi][self.pj] = 0;
+                }
+                _ => {
+                    let dir = DIR.iter().position(|&d| d == c).unwrap();
+                    let (di, dj) = DIJ[dir];
+                    self.pi -= di;
+                    self.pj -= dj;
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
+const DIJ: [(usize, usize); 4] = [(!0, 0), (1, 0), (0, !0), (0, 1)];
+const DIR: [char; 4] = ['U', 'D', 'L', 'R'];
+
+#[macro_export]
+macro_rules! mat {
+	($($e:expr),*) => { Vec::from(vec![$($e),*]) };
+	($($e:expr,)*) => { Vec::from(vec![$($e),*]) };
+	($e:expr; $d:expr) => { Vec::from(vec![$e; $d]) };
+	($e:expr; $d:expr $(; $ds:expr)+) => { Vec::from(vec![mat![$e $(; $ds)*]; $d]) };
+}
+
+#[derive(Clone, Debug)]
+pub struct Input {
+    N: usize,
+    w: Vec<Vec<i32>>,
+    d: Vec<Vec<i32>>,
+}
+
+pub trait SetMinMax {
+    fn setmin(&mut self, v: Self) -> bool;
+    fn setmax(&mut self, v: Self) -> bool;
+}
+impl<T> SetMinMax for T
+where
+    T: PartialOrd,
+{
+    fn setmin(&mut self, v: T) -> bool {
+        *self > v && {
+            *self = v;
+            true
+        }
+    }
+    fn setmax(&mut self, v: T) -> bool {
+        *self < v && {
+            *self = v;
+            true
+        }
+    }
+}

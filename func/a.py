@@ -145,7 +145,7 @@ def get_line_equation_from_points(p1, p2):
     b = (x2*y1-x1*y2)/(x2-x1)
     return a, b
 
-# 配列を渡すと最小増加列を返す
+# 配列を渡すと最長増加列を返す
 import bisect
 def LIS(seq):
     res = [seq[0]]

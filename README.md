@@ -20,8 +20,11 @@ https://qiita.com/DaikiSuyama/items/11f63a94d63fa72e8bf4
 - ２次元配列と三次元配列
 - ４近傍と８近傍
 - 同じく現在地から近傍への移動
-- グラフ構造の入力
-- インデックス付きで配列を受け取る
+
+```
+'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+```
+
 
 ### 再帰処理書く時
 
@@ -39,6 +42,16 @@ from atcoder.modint import Modint, ModContext
 
 mod = 998244353
 with ModContext(mod):
+```
+
+### 逆元
+Modintを使うほどではない場面では逆元を掛け算
+
+```
+mod = 998244353
+inv_a = pow(a, mod - 2, mod)
+
+# inv_2 = pow(2, mod - 2, mod)
 ```
 
 ### メモ化再帰
@@ -77,13 +90,38 @@ ARC184参照
 
 The following code is what I wrote to solve a problem in an AtCoder contest. When using generative AI to translate programming languages during an ongoing AtCoder contest, there are the following restrictions: "It is absolutely necessary to include the original code at the beginning of the submission as a comment or similar." "Only translations that do not alter the algorithm are permitted. In particular, any changes that would affect the time complexity are strictly prohibited." For any parts that cannot be directly translated, please mark them as "FAILED" and leave them unconverted. Following these strict AtCoder rules, please translate the following code from python to C++.
 
-## 身についてない発想
+### 木のエッジケース
 
-二次元の問題でH*Wに制約があるとき、短い方で全探索することがある。回転すれば場合分けしなくていい。
+- ノードが1つのみ
+- パスグラフ
 
-```
-'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-```
+### セグ木の取り扱い
+
+更新クエリが無いものをsetで構築しない。前処理で捌いてから構築する。  
+例えば上位2つの要素を持つseg木を構築したければ、各indexの上位2要素を持ってから構築する。  
+opが重い場合は要注意
+ex. https://atcoder.jp/contests/abc457/tasks/abc457_e
+
+### bisectのやらかし
+
+落ち着いて以下の図を見ながら頭を整理しながら使うこと。
+https://qiita.com/manuo/items/e0bdbc5974800b7bd382
+indexエラーを潰すために雑にindexを-1して爆死すること多し。番兵を入れるか例外処理を書くかする。
+
+
+
+## 身についてない
+
+
+### グリッド問題Tips
+
+- 二次元の問題でH*Wに制約があるとき、短い方で全探索することがある。回転すれば場合分けしなくていい。
+- グリッド系の問題で、片方の軸の問題をO(1)に落としてもう片方の軸で全探索
+
+
+### サイクル検出
+
+SCCにかけて、グループの要素数が1でないものは自己ループしている
 
 ## 意外と危ない
 

@@ -1,4 +1,4 @@
-# n <= 10**7 くらいまで使える
+mod = 998244353
 
 class mod_comb:
     def __init__(self, max_n, mod):
@@ -27,26 +27,24 @@ class mod_comb:
         return self.factorials[n]*self.inverses[r]*self.inverses[n-r]%self.mod
 
 if __name__ == "__main__":
-    nCr_mod = mod_comb(10**6, 10**9+7)
-    print(nCr_mod.get(5, 2))
-    print(nCr_mod.get(10**6, 5*10**5+1))
+    nCr_mod = mod_comb(5*10**6, mod)
 
+    X1, X2, X3 = list(map(int, input().split()))
 
-# nがでかいバージョン
+    ans = 0
 
-# https://algo-logic.info/combination/
-fact_inv = [None]*10**7
-inv = [None]*10**7
-fact_inv[0] = 1
-fact_inv[1] = 1
-inv[1] = 1
-for i in range(2, 10**7):
-    inv[i] = mod - inv[mod%i] * (mod // i) % mod
-    fact_inv[i] = fact_inv[i-1] * inv[i] % mod
+    # ２をしきりとすると、X2 + 1 この区間がある。その中からkを選び、そこには1を一つ以上配置するとする
+    for k in range(1, X2+1+1):
+        # k個の区間を選ぶ
+        tmp = nCr_mod.get(X2+1, k)
+        # 1を置く場所を選ぶ
+        tmp *= nCr_mod.get(X1-1, k-1)
+        tmp %= mod
+        # X2 + 1 - k の残りの区間の位置に3を0個以上配置する
+        tmp *= nCr_mod.get(X2 - k + X3, X2 - k)
+        tmp %= mod
 
-def nCk(n, k):
-    ans = 1
-    for i in range(n, n-k, -1):
-        ans *= i
+        ans += tmp
         ans %= mod
-    return ans * fact_inv[k] % mod
+
+    print(ans)

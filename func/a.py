@@ -147,15 +147,40 @@ def get_line_equation_from_points(p1, p2):
 
 # 配列を渡すと最長増加列を返す
 import bisect
-def LIS(seq):
-    res = [seq[0]]
-    for i in range(len(seq)):
-        if seq[i] > res[-1]:
-            res.append(seq[i])
-        else:
-            res[bisect.bisect_left(res, seq[i])] = seq[i]
+def LIS(seq, mode="values"):
+    if not seq:
+        return []
 
-    return res
+    n = len(seq)
+    tails = []
+    tails_idx = []
+    prev = [-1] * n
+
+    for i, x in enumerate(seq):
+        pos = bisect.bisect_left(tails, x)
+
+        if pos > 0:
+            prev[i] = tails_idx[pos - 1]
+
+        if pos == len(tails):
+            tails.append(x)
+            tails_idx.append(i)
+        else:
+            tails[pos] = x
+            tails_idx[pos] = i
+
+    idx = []
+    cur = tails_idx[-1]
+
+    while cur != -1:
+        idx.append(cur)
+        cur = prev[cur]
+
+    idx.reverse()
+
+    if mode == "idx":
+        return idx
+    return [seq[i] for i in idx]
 
 # 線分P1P2と線分Q1Q2の交差判定
 def is_intersection(p1, p2, q1, q2):

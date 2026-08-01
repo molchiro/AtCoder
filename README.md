@@ -44,6 +44,9 @@ mod = 998244353
 with ModContext(mod):
 ```
 
+`[Modint(0) for _ in range(L)]` と `[Modint(0)]*L` は等価でないことに注意（後者はNG）
+
+
 ### 逆元
 Modintを使うほどではない場面では逆元を掛け算
 
@@ -87,9 +90,6 @@ H=1, W=1が危ない
 
 ARC184参照
 
-
-The following code is what I wrote to solve a problem in an AtCoder contest. When using generative AI to translate programming languages during an ongoing AtCoder contest, there are the following restrictions: "It is absolutely necessary to include the original code at the beginning of the submission as a comment or similar." "Only translations that do not alter the algorithm are permitted. In particular, any changes that would affect the time complexity are strictly prohibited." For any parts that cannot be directly translated, please mark them as "FAILED" and leave them unconverted. Following these strict AtCoder rules, please translate the following code from python to C++.
-
 ### 木のエッジケース
 
 - ノードが1つのみ
@@ -108,8 +108,6 @@ ex. https://atcoder.jp/contests/abc457/tasks/abc457_e
 https://qiita.com/manuo/items/e0bdbc5974800b7bd382
 indexエラーを潰すために雑にindexを-1して爆死すること多し。番兵を入れるか例外処理を書くかする。
 
-
-
 ## 身についてない
 
 
@@ -122,6 +120,27 @@ indexエラーを潰すために雑にindexを-1して爆死すること多し�
 ### サイクル検出
 
 SCCにかけて、グループの要素数が1でないものは自己ループしている
+
+### 狭義短調増加の変換
+
+`Ai`​を`Ai​ − i`に置き換えることで、Aを狭義単調増加にする問題からAを広義単調増加にする問題に帰着させる
+この形になると、
+
+違反したらブロックをマージする
+ブロックごとに代表値を決める
+L1 なら中央値
+L2 なら平均値
+最大誤差最小化なら区間の上下限を見る
+
+### 桁DPが苦手
+
+- N以下をdpテーブルで表現してもいいが、dpテーブルは未満確定だけにして、Nピッタリのやつは管理するstateだけ持つ手もある
+- leading-0も苦手。これもテーブルに載せない方が性にあっているかもしれない
+
+NちょうどとN未満を分離した例
+https://atcoder.jp/contests/abc465/submissions/77217203
+そこからさらにリファクタした例
+https://atcoder.jp/contests/abc465/submissions/77221242
 
 ## 意外と危ない
 

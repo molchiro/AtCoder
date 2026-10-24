@@ -1,4 +1,4 @@
-class cumsum_2d:
+class Cumsum_2d:
     def __init__(self, two_d_list: list[list[int]]):
         H = len(two_d_list)
         W = len(two_d_list[0])

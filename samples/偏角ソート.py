@@ -14,15 +14,17 @@ def cmp_arg_ccw_from_posx(a, b):
     # 同じ側にいるなら外積で比較
     return ay * bx - ax * by
 
+key_cmp_arg_ccw_from_posx = cmp_to_key(cmp_arg_ccw_from_posx)
+
 # --- tests / asserts ---
 p = [(0, 1), (1, -2), (-2, 0)]
-assert sorted(p, key=cmp_to_key(cmp_arg_ccw_from_posx)) == [(0, 1), (-2, 0), (1, -2)]
+assert sorted(p, key=key_cmp_arg_ccw_from_posx) == [(0, 1), (-2, 0), (1, -2)]
 
 p2 = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-assert sorted(p2, key=cmp_to_key(cmp_arg_ccw_from_posx)) == [(1, 0), (0, 1), (-1, 0), (0, -1)]
+assert sorted(p2, key=key_cmp_arg_ccw_from_posx) == [(1, 0), (0, 1), (-1, 0), (0, -1)]
 
 p3 = [(2, 2), (1, 1), (3, 3), (1, 0)]
-assert sorted(p3, key=cmp_to_key(cmp_arg_ccw_from_posx)) == [(1, 0), (2, 2), (1, 1), (3, 3)]
+assert sorted(p3, key=key_cmp_arg_ccw_from_posx) == [(1, 0), (2, 2), (1, 1), (3, 3)]
 
 
 # 傾きのみバージョン (-π/2, -π/2]
@@ -34,9 +36,11 @@ def cmp_slope_minus90_to_90(a, b):
 
     return ay * bx - ax * by
 
+key_cmp_slope_minus90_to_90 = cmp_to_key(cmp_slope_minus90_to_90)
+
 # --- asserts ---
 p2 = [(1, -2), (2, -1), (1, 0), (2, 1), (1, 2), (0, 5)]
-assert sorted(p2, key=cmp_to_key(cmp_slope_minus90_to_90)) == [
+assert sorted(p2, key=key_cmp_slope_minus90_to_90) == [
     (1, -2),
     (2, -1),
     (1, 0),
@@ -46,6 +50,6 @@ assert sorted(p2, key=cmp_to_key(cmp_slope_minus90_to_90)) == [
 ]
 
 p3 = [(1, 1), (-1, -1), (2, 2)]
-assert sorted(p3, key=cmp_to_key(cmp_slope_minus90_to_90)) == [(1, 1), (-1, -1), (2, 2)]
+assert sorted(p3, key=key_cmp_slope_minus90_to_90) == [(1, 1), (-1, -1), (2, 2)]
 
 print("all asserts passed")
